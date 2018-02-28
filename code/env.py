@@ -33,12 +33,6 @@ class Env:
     def run(self):
         initialconfig = Config([], [], [])
         c = 0
-
-        for i in range(NREPLICAS):
-            pid = "replica %d" % i
-            Replica(self, pid, initialconfig)
-            initialconfig.replicas.append(pid)
-
         for i in range(self.cluster_size):
             pid = "acceptor %d.%d" % (c,i)
             Acceptor(self, pid)
@@ -49,6 +43,11 @@ class Env:
             Leader(self, pid, initialconfig)
             initialconfig.leaders.append(pid)
 
+        for i in range(NREPLICAS):
+            pid = "replica %d" % i
+            Replica(self, pid, initialconfig)
+            initialconfig.replicas.append(pid)
+
         # Start the timer
         start_time = time.time()
 
@@ -57,14 +56,18 @@ class Env:
             Client(self, pid, initialconfig.replicas)
 
         print("--- %s seconds ---" % (time.time() - start_time))
+
         time.sleep(10)
+
+        for x in initialconfig.replicas:
+            print(self.procs[x].accepted)
 
 def main(cluster_size, number_clients):
     e = Env(cluster_size, number_clients)
     e.run()
     sys.stdout.flush()
     sys.stderr.flush()
-    sys.exit(1)
+    sys.exit()
 
 if __name__=='__main__':
     # Find the wanted size of the cluster as a command line argument

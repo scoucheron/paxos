@@ -6,11 +6,11 @@ import time
 class Replica(Process):
   def __init__(self, env, id, config):
     Process.__init__(self, env, id)
-    self.slot_in = 1
-    self.slot_out = 1
+    self.slot_in = self.slot_out = 1
     self.proposals = {}
     self.decisions = {}
     self.requests = []
+    self.accepted = 0
     self.config = config
     self.env.addProc(self)
 
@@ -36,9 +36,8 @@ class Replica(Process):
     if isinstance(cmd, ReconfigCommand):
       self.slot_out += 1
       return
-    # print(self.id, ": perform",self.slot_out, ":", cmd)
+    print(self.id, ": perform",self.slot_out, ":", cmd)
     self.slot_out += 1
-    print(self.slot_out-1)
 
   def body(self):
     print("Here I am: ", self.id)
@@ -54,6 +53,7 @@ class Replica(Process):
               self.requests.append(self.proposals[self.slot_out])
             del self.proposals[self.slot_out]
           self.perform(self.decisions[self.slot_out])
+          self.accepted += 1
       else:
         print("Replica: unknown msg type")
       self.propose()

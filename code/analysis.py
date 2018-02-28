@@ -1,6 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from env import *
+
+
+def run_test(num_accept, num_client):
+    
+
 
 def plotting(resultList, number_clients):
     '''
@@ -48,16 +54,16 @@ def calculate_std_mean(data):
     return mean, stdR
 
 
-    if __name__=='__main__':
-        # Find the wanted size of the cluster as a command line argument
-        try:
-            size = int(sys.argv[1])
-            number_clients = int(sys.argv[2])
-        except:
-            sys.exit("The arguments are as follows (both as given as integers): \n \t size: the size of the paxos cluster \n \t treshold: upper threshold of concurrent clients\n\n  Example: ./env 3 4 \t will run the evaluation with a cluster size of 3 and threshold 4")
+if __name__=='__main__':
+    # Find the wanted size of the cluster as a command line argument
+    try:
+        size = int(sys.argv[1])
+        number_clients = int(sys.argv[2])
+    except:
+        sys.exit("The arguments are as follows (both as given as integers): \n \t size: the size of the paxos cluster \n \t treshold: upper threshold of concurrent clients\n\n  Example: ./env 3 4 \t will run the evaluation with a cluster size of 3 and threshold 4")
 
-        # Create a random list
-        resultList = np.random.uniform(50, 10, size=number_clients)
-
-        # Plot the results and save them to a file
-        plotting(resultList, number_clients)
+    # Create a random list
+    resultList = np.random.uniform(50, 10, size=number_clients)
+    run_test(1,10)
+    # Plot the results and save them to a file
+    # plotting(resultList, number_clients)
