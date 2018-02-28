@@ -48,23 +48,23 @@ def plotting(resultList, number_clients, stdR_list):
     clients = np.arange(1, number_clients+1)
 
     f = plt.figure()
+    ax = plt.gca()
+    ax.yaxis.grid(True)
 
     # Label the above the figure, on x-axis and on y-axis
-    plt.title('users')
     plt.ylabel('Accepted proposals per seconds')
     plt.xlabel('# of concurrent clients')
 
     # Plot the result
-    print(clients)
-    print(resultList)
     plt.plot(clients, resultList)
 
     # Force the x-axis to be only integers
     plt.xticks(clients)
 
     # Errorbar
-    plt.errorbar(clients, resultList, stdR_list,  marker='o')
+    plt.errorbar(clients, resultList, stdR_list,  marker='o', color='red')
 
+    plt.xlim(0.95, number_clients+0.05)
     plt.show()
 
     #Save the graph to a pdf
@@ -75,7 +75,10 @@ def calculate_std_mean(data):
         Calculates the given datas mean and standardeviation
             @ Input: All the data from a given number of clients in the test to find the STD and mean
             @ Output: mean and standardeviation from the data
-        '''
+    '''
+    # take away any values that are possibly too huge or low (extreme values)
+    data.sort()
+    data = data[1:-1]
     stdR = np.std(data)
     mean = np.mean(data)
     return mean, stdR

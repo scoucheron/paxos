@@ -4,8 +4,6 @@ from replica import Replica
 from utils import *
 import time
 
-
-
 class Client(Process):
     def __init__(self, env, id, config, nreq):
         Process.__init__(self, env, id)
