@@ -4,16 +4,17 @@ from replica import Replica
 from utils import *
 import time
 
-NREQUESTS = 10
+
 
 class Client(Process):
-    def __init__(self, env, id, config):
+    def __init__(self, env, id, config, nreq):
         Process.__init__(self, env, id)
         self.config = config
+        self.nreq = nreq
         self.env.addProc(self)
 
     def body(self):
-        for x in range(NREQUESTS):
+        for x in range(self.nreq):
             for r in self.config:
                 cmd = Command(self.id,0,"operation %d.%d" % (x, x))
                 self.sendMessage(r,RequestMessage(self.id ,cmd))

@@ -1,4 +1,4 @@
-import os, signal, sys, time
+import os, signal, sys, time, json
 from acceptor import Acceptor
 from leader import Leader
 from message import RequestMessage
@@ -6,11 +6,10 @@ from process import Process
 from replica import Replica
 from client import Client
 from utils import *
-import time
 
 NREPLICAS = 1
 NLEADERS = 1
-NREQUESTS = 10
+NREQUESTS = 100
 
 class Env:
     def __init__(self, cluster_size, number_clients):
@@ -48,26 +47,34 @@ class Env:
             Replica(self, pid, initialconfig)
             initialconfig.replicas.append(pid)
 
-        # Start the timer
-        start_time = time.time()
-
         for i in range(self.number_clients):
             pid = "client %d.%d" % (c,i)
-            Client(self, pid, initialconfig.replicas)
+            Client(self, pid, initialconfig.replicas, NREQUESTS)
 
-        print("--- %s seconds ---" % (time.time() - start_time))
+        done = False
+        while not done:
+            done = False
+            for x in initialconfig.replicas:
+                if self.procs[x].accepted - (NREQUESTS*self.number_clients) == 0:
+                    time_end = time.perf_counter()
+                    done = True
+            time.sleep(1)
 
-        time.sleep(10)
+        #Timing variables
+        start = self.procs[x].start_time
+        acc = self.procs[x].accepted
+        time_total = (time_end - start)
+        per_second = int(acc/time_total)
 
-        for x in initialconfig.replicas:
-            print(self.procs[x].accepted)
+        with open('data.txt', 'a') as outfile:
+            outfile.write(str(per_second))
+            outfile.write("\n")
 
 def main(cluster_size, number_clients):
     e = Env(cluster_size, number_clients)
     e.run()
-    sys.stdout.flush()
-    sys.stderr.flush()
-    sys.exit()
+    os._exit(1)
+
 
 if __name__=='__main__':
     # Find the wanted size of the cluster as a command line argument
