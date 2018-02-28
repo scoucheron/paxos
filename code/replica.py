@@ -6,7 +6,8 @@ import time
 class Replica(Process):
   def __init__(self, env, id, config):
     Process.__init__(self, env, id)
-    self.slot_in = self.slot_out = 1
+    self.slot_in = 1
+    self.slot_out = 1
     self.proposals = {}
     self.decisions = {}
     self.requests = []
@@ -35,8 +36,9 @@ class Replica(Process):
     if isinstance(cmd, ReconfigCommand):
       self.slot_out += 1
       return
-    print(self.id, ": perform",self.slot_out, ":", cmd)
+    # print(self.id, ": perform",self.slot_out, ":", cmd)
     self.slot_out += 1
+    print(self.slot_out-1)
 
   def body(self):
     print("Here I am: ", self.id)
