@@ -23,7 +23,6 @@ def run_test(num_accept, num_client):
         with open('data.txt') as datafile:
             int_list = [int(i) for i in datafile]
 
-
         #Calculate the mean value and the standardeviation
         mean, stdR = calculate_std_mean(int_list)
         time.sleep(1)
